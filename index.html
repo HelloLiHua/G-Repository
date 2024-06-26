@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        clear: both;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .content {
+        width: 600px;
+        height: 400px;
+        border: solid black 1px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+      }
+      .fun-btn {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .fun-btn:hover {
+        cursor: pointer;
+      }
+      .right-top {
+        position: absolute;
+        right: -25px;
+        top: -25px;
+        background-color: lightblue;
+      }
+      .left-buttom {
+        position: absolute;
+        left: -25px;
+        bottom: -25px;
+        background-color: green;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content" id="content">
+      <img id="img" src="/assets/imgs/wallhaven-283ry9.webp" alt="图片" />
+      <div class="fun-btn right-top" id="xuanzhuan">旋 转</div>
+      <div class="fun-btn left-buttom" id="fanzhuan">翻 转</div>
+    </div>
+    <script>
+      var img = document.getElementById("img");
+      var content = document.getElementById("content");
+
+      // 旋转
+      function xuanzhuan() {
+        let xuanzhuan = document.getElementById("xuanzhuan");
+        let content = document.getElementById("content");
+        let x1, y1, x2, y2;
+        let currentAngle = 0; // 初始角度为0
+        // 旋转夹角获取
+        function getAngle(x1, y1, x2, y2) {
+          // 获取组件的位置信息
+          let rect = document.getElementById("content").getBoundingClientRect();
+          let { x, y, width, height } = rect;
+
+          //中心点
+          let cx = x + width / 2;
+          let cy = y + height / 2;
+
+          //2个点之间的角度获取
+          let c1 = (Math.atan2(y1 - cy, x1 - cx) * 180) / Math.PI;
+          let c2 = (Math.atan2(y2 - cy, x2 - cx) * 180) / Math.PI;
+          let angle;
+          c1 = c1 <= -90 ? 360 + c1 : c1;
+          c2 = c2 <= -90 ? 360 + c2 : c2;
+
+          //夹角获取
+          angle = Math.floor(c2 - c1);
+          angle = angle < 0 ? angle + 360 : angle;
+          return angle;
+        }
+        // 定义处理mousemove的函数
+        function handleMouseMove(event) {
+          x2 = event.clientX;
+          y2 = event.clientY;
+          let deg = getAngle(x1, y1, x2, y2);
+          content.style.transform = `rotate(${currentAngle + deg}deg)`;
+        }
+        // 鼠标按下
+        xuanzhuan.addEventListener("mousedown", (event) => {
+          x1 = event.clientX;
+          y1 = event.clientY;
+          document.addEventListener("mousemove", handleMouseMove);
+          event.preventDefault();
+        });
+        // 鼠标抬起
+        document.addEventListener("mouseup", (event) => {
+          currentAngle += getAngle(x1, y1, x2, y2);
+          document.removeEventListener("mousemove", handleMouseMove);
+          event.preventDefault();
+        });
+      }
+      // 翻转
+      function fanzhuan() {
+        let deg = 0;
+        document.getElementById("fanzhuan").addEventListener("click", () => {
+          deg += 180;
+          img.style.transform = "rotateY(" + deg + "deg)";
+        });
+      }
+      fanzhuan();
+      xuanzhuan();
+    </script>
+  </body>
+</html>
